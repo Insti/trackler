@@ -82,28 +82,20 @@ module Trackler
       end
 
       def to_s
-        assemble_readme
-      end
-
-      def assemble_readme
         <<-README
-# #{readme_title}
+# #{problem.name}
 
 #{problem.blurb}
 
-#{readme_body}
+#{body}
 
-#{readme_source}
+#{problem.source_markdown}
 
-#{incomplete_solutions_body}
+#{incomplete_solutions_section}
 README
       end
 
-      def readme_title
-        problem.name
-      end
-
-      def readme_body
+      def body
         [
           problem.description,
           implementation.hints,
@@ -111,11 +103,7 @@ README
         ].reject(&:empty?).join("\n").strip
       end
 
-      def readme_source
-        problem.source_markdown
-      end
-
-      def incomplete_solutions_body
+      def incomplete_solutions_section
         <<-README
 ## Submitting Incomplete Problems
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
