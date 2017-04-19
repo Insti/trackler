@@ -47,15 +47,8 @@ module Trackler
     end
 
     def hints
-      read File.join(dir, 'HINTS.md')
-    end
-
-    def read(f)
-      if File.exist?(f)
-        File.read(f)
-      else
-        ""
-      end
+      hints_file = File.join(dir, 'HINTS.md')
+      File.exist?(hints_file) ? File.read(hints_file) : ''
     end
 
     private
