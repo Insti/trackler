@@ -38,7 +38,7 @@ module Trackler
         Implementation.new(track, Problem.new(k, root, track))
       }
       all.each do |impl|
-        hash[impl.problem.slug] = impl
+        hash[impl.slug] = impl
       end
       hash
     end
