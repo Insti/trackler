@@ -10,6 +10,9 @@ module Trackler
       "/\.meta/"
     ]
 
+    extend Forwardable
+    def_delegators :@problem, :name, :blurb, :description, :source_markdown, :slug
+
     attr_reader :track, :problem
     attr_writer :files
     def initialize(track, problem)
@@ -39,7 +42,7 @@ module Trackler
     end
 
     def readme
-      @readme ||= ReadmeGenerator.new(implementation: self, track: track, problem: problem).to_s
+      @readme ||= ReadmeGenerator.new(implementation: self, track: track).to_s
     end
 
     def git_url
@@ -55,9 +58,9 @@ module Trackler
 
     def exercise_dir
       if File.exist?(track.dir.join('exercises'))
-        File.join('exercises', problem.slug)
+        File.join('exercises', slug)
       else
-        problem.slug
+        slug
       end
     end
 
@@ -73,23 +76,22 @@ module Trackler
 
     # Generates the Readme.md for the implementation
     class ReadmeGenerator
-      attr_reader :implementation, :track, :problem
+      attr_reader :implementation, :track
 
-      def initialize(implementation:, track:, problem:)
+      def initialize(implementation:, track:)
         @implementation = implementation
         @track = track
-        @problem = problem
       end
 
       def to_s
         <<-README
-# #{problem.name}
+# #{implementation.name}
 
-#{problem.blurb}
+#{implementation.blurb}
 
 #{body}
 
-#{problem.source_markdown}
+#{implementation.source_markdown}
 
 #{incomplete_solutions_section}
 README
@@ -97,7 +99,7 @@ README
 
       def body
         [
-          problem.description,
+          implementation.description,
           implementation.hints,
           track.hints,
         ].reject(&:empty?).join("\n").strip
