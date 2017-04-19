@@ -50,6 +50,18 @@ module Trackler
       @dir ||= track.dir.join(exercise_dir)
     end
 
+    def hints
+      read File.join(dir, 'HINTS.md')
+    end
+
+    def read(f)
+      if File.exist?(f)
+        File.read(f)
+      else
+        ""
+      end
+    end
+
     private
 
     def regexes_to_ignore
@@ -101,7 +113,7 @@ README
       def readme_body
         [
           problem.description,
-          implementation_hints,
+          implementation.hints,
           track.hints,
         ].reject(&:empty?).join("\n").strip
       end
@@ -115,18 +127,6 @@ README
 ## Submitting Incomplete Problems
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
         README
-      end
-
-      def implementation_hints
-        read File.join(implementation.dir, 'HINTS.md')
-      end
-
-      def read(f)
-        if File.exist?(f)
-          File.read(f)
-        else
-          ""
-        end
       end
     end
   end
