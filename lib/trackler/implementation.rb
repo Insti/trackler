@@ -18,16 +18,16 @@ module Trackler
     end
 
     def file_bundle
-      @file_bundle ||= FileBundle.new(implementation_dir, regexes_to_ignore)
+      @file_bundle ||= FileBundle.new(dir, regexes_to_ignore)
     end
 
     def exists?
-      File.exist?(implementation_dir)
+      File.exist?(dir)
     end
 
     def files
       @files ||= Hash[file_bundle.paths.map {|path|
-        [path.relative_path_from(implementation_dir).to_s, File.read(path)]
+        [path.relative_path_from(dir).to_s, File.read(path)]
       }].merge("README.md" => readme)
     end
 
@@ -39,11 +39,15 @@ module Trackler
     end
 
     def readme
-      @readme ||= assemble_readme
+      @readme ||= ReadmeGenerator.new(self, track, problem).to_s
     end
 
     def git_url
       [track.repository, "tree/master", exercise_dir].join("/")
+    end
+
+    def dir
+      @dir ||= track.dir.join(exercise_dir)
     end
 
     private
@@ -54,10 +58,6 @@ module Trackler
       end
     end
 
-    def implementation_dir
-      @implementation_dir ||= track.dir.join(exercise_dir)
-    end
-
     def exercise_dir
       if File.exist?(track.dir.join('exercises'))
         File.join('exercises', problem.slug)
@@ -66,8 +66,22 @@ module Trackler
       end
     end
 
-    def assemble_readme
-      <<-README
+    # Generates the Readme.md for the implementation
+    class ReadmeGenerator
+      attr_reader :implementation, :track, :problem
+
+      def initialize(implementation, track, problem)
+        @implementation = implementation
+        @track = track
+        @problem = problem
+      end
+
+      def to_s
+        assemble_readme
+      end
+
+      def assemble_readme
+        <<-README
 # #{readme_title}
 
 #{problem.blurb}
@@ -77,41 +91,42 @@ module Trackler
 #{readme_source}
 
 #{incomplete_solutions_body}
-      README
-    end
+README
+      end
 
-    def readme_title
-      problem.name
-    end
+      def readme_title
+        problem.name
+      end
 
-    def readme_body
-      [
-        problem.description,
-        implementation_hints,
-        track.hints,
-      ].reject(&:empty?).join("\n").strip
-    end
+      def readme_body
+        [
+          problem.description,
+          implementation_hints,
+          track.hints,
+        ].reject(&:empty?).join("\n").strip
+      end
 
-    def readme_source
-      problem.source_markdown
-    end
+      def readme_source
+        problem.source_markdown
+      end
 
-    def incomplete_solutions_body
-      <<-README
+      def incomplete_solutions_body
+        <<-README
 ## Submitting Incomplete Problems
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-      README
-    end
+        README
+      end
 
-    def implementation_hints
-      read File.join(implementation_dir, 'HINTS.md')
-    end
+      def implementation_hints
+        read File.join(implementation.dir, 'HINTS.md')
+      end
 
-    def read(f)
-      if File.exist?(f)
-        File.read(f)
-      else
-        ""
+      def read(f)
+        if File.exist?(f)
+          File.read(f)
+        else
+          ""
+        end
       end
     end
   end
