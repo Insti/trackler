@@ -17,12 +17,12 @@ module Trackler
       @problem = problem
     end
 
-    def file_bundle
-      @file_bundle ||= FileBundle.new(dir, regexes_to_ignore)
-    end
-
     def exists?
       File.exist?(dir)
+    end
+
+    def dir
+      @dir ||= track.dir.join(exercise_dir)
     end
 
     def files
@@ -46,10 +46,6 @@ module Trackler
       [track.repository, "tree/master", exercise_dir].join("/")
     end
 
-    def dir
-      @dir ||= track.dir.join(exercise_dir)
-    end
-
     def hints
       read File.join(dir, 'HINTS.md')
     end
@@ -64,17 +60,21 @@ module Trackler
 
     private
 
-    def regexes_to_ignore
-      (IGNORE_PATTERNS + [@track.ignore_pattern]).map do |pattern|
-        Regexp.new(pattern, Regexp::IGNORECASE)
-      end
-    end
-
     def exercise_dir
       if File.exist?(track.dir.join('exercises'))
         File.join('exercises', problem.slug)
       else
         problem.slug
+      end
+    end
+
+    def file_bundle
+      @file_bundle ||= FileBundle.new(dir, regexes_to_ignore)
+    end
+
+    def regexes_to_ignore
+      (IGNORE_PATTERNS + [@track.ignore_pattern]).map do |pattern|
+        Regexp.new(pattern, Regexp::IGNORECASE)
       end
     end
 
