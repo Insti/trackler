@@ -39,7 +39,7 @@ module Trackler
     end
 
     def readme
-      @readme ||= ReadmeGenerator.new(self, track, problem).to_s
+      @readme ||= ReadmeGenerator.new(implementation: self, track: track, problem: problem).to_s
     end
 
     def git_url
@@ -75,7 +75,7 @@ module Trackler
     class ReadmeGenerator
       attr_reader :implementation, :track, :problem
 
-      def initialize(implementation, track, problem)
+      def initialize(implementation:, track:, problem:)
         @implementation = implementation
         @track = track
         @problem = problem
