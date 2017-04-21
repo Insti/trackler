@@ -20,10 +20,6 @@ module Trackler
       @problem = problem
     end
 
-    def dir
-      @dir ||= track.dir.join(exercise_dir)
-    end
-
     def exists?
       File.exist?(dir)
     end
@@ -57,8 +53,8 @@ module Trackler
       end
     end
 
-    def file_bundle
-      @file_bundle ||= FileBundle.new(dir, regexes_to_ignore)
+    def dir
+      @dir ||= track.dir.join(exercise_dir)
     end
 
     def exercise_dir
@@ -67,6 +63,10 @@ module Trackler
       else
         slug
       end
+    end
+
+    def file_bundle
+      @file_bundle ||= FileBundle.new(dir, regexes_to_ignore)
     end
 
     def assemble_readme
