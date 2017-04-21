@@ -20,12 +20,12 @@ module Trackler
       @problem = problem
     end
 
-    def exists?
-      File.exist?(dir)
-    end
-
     def dir
       @dir ||= track.dir.join(exercise_dir)
+    end
+
+    def exists?
+      File.exist?(dir)
     end
 
     def files
