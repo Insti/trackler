@@ -69,11 +69,6 @@ module Trackler
       end
     end
 
-    def hints_file_contents
-      hints_file = File.join(dir, 'HINTS.md')
-      File.exist?(hints_file) ? File.read(hints_file) : ''
-    end
-
     def assemble_readme
       <<-README
 #{description_markdown}
@@ -113,6 +108,11 @@ MARKDOWN
 ## Submitting Incomplete Problems
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
       README
+    end
+
+    def hints_file_contents
+      hints_file = File.join(dir, 'HINTS.md')
+      File.exist?(hints_file) ? File.read(hints_file) : ''
     end
   end
 end
