@@ -42,30 +42,11 @@ module Trackler
     end
 
     def readme
-      @readme ||= ReadmeGenerator.new(implementation: self).to_s
+      @readme ||= assemble_readme
     end
 
     def git_url
       [track.repository, "tree/master", exercise_dir].join("/")
-    end
-
-    def hints
-      [
-        hints_file_contents,
-        track.hints
-      ].reject(&:empty?).join("\n").strip
-    end
-
-    def description_markdown
-      <<-MARKDOWN.chomp
-# #{name}
-
-#{blurb}
-
-#{body}
-
-#{source_markdown}
-MARKDOWN
     end
 
     private
@@ -93,6 +74,26 @@ MARKDOWN
       File.exist?(hints_file) ? File.read(hints_file) : ''
     end
 
+    def assemble_readme
+      <<-README
+#{description_markdown}
+
+#{incomplete_solutions_section}
+README
+    end
+
+    def description_markdown
+      <<-MARKDOWN.chomp
+# #{name}
+
+#{blurb}
+
+#{body}
+
+#{source_markdown}
+MARKDOWN
+    end
+
     def body
       [
         description,
@@ -100,30 +101,18 @@ MARKDOWN
       ].reject(&:empty?).join("\n").strip
     end
 
-    # Generates the Readme.md for the implementation
-    class ReadmeGenerator
-      def initialize(implementation:)
-        @implementation = implementation
-      end
+    def hints
+      [
+        hints_file_contents,
+        track.hints
+      ].reject(&:empty?).join("\n").strip
+    end
 
-      def to_s
-        <<-README
-#{implementation.description_markdown}
-
-#{incomplete_solutions_section}
-README
-      end
-
-      private
-
-      attr_reader :implementation
-
-      def incomplete_solutions_section
-        <<-README
+    def incomplete_solutions_section
+      <<-README
 ## Submitting Incomplete Problems
 It's possible to submit an incomplete solution so you can see how others have completed the exercise.
-        README
-      end
+      README
     end
   end
 end
