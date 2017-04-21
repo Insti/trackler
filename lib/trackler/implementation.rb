@@ -69,7 +69,7 @@ module Trackler
     end
 
     def regexes_to_ignore
-      (IGNORE_PATTERNS + [@track.ignore_pattern]).map do |pattern|
+      (IGNORE_PATTERNS + [track.ignore_pattern]).map do |pattern|
         Regexp.new(pattern, Regexp::IGNORECASE)
       end
     end
