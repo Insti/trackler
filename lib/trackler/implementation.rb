@@ -42,7 +42,7 @@ module Trackler
     end
 
     def readme
-      @readme ||= ReadmeGenerator.new(implementation: self, track: track).to_s
+      @readme ||= ReadmeGenerator.new(implementation: self).to_s
     end
 
     def git_url
@@ -50,8 +50,10 @@ module Trackler
     end
 
     def hints
-      hints_file = File.join(dir, 'HINTS.md')
-      File.exist?(hints_file) ? File.read(hints_file) : ''
+      [
+        hints_file_contents,
+        track.hints
+      ].reject(&:empty?).join("\n").strip
     end
 
     private
@@ -74,13 +76,15 @@ module Trackler
       end
     end
 
+    def hints_file_contents
+      hints_file = File.join(dir, 'HINTS.md')
+      File.exist?(hints_file) ? File.read(hints_file) : ''
+    end
+
     # Generates the Readme.md for the implementation
     class ReadmeGenerator
-      attr_reader :implementation, :track
-
-      def initialize(implementation:, track:)
+      def initialize(implementation:)
         @implementation = implementation
-        @track = track
       end
 
       def to_s
@@ -97,11 +101,14 @@ module Trackler
 README
       end
 
+      private
+
+      attr_reader :implementation
+
       def body
         [
           implementation.description,
           implementation.hints,
-          track.hints,
         ].reject(&:empty?).join("\n").strip
       end
 
