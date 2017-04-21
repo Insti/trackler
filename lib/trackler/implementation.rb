@@ -56,6 +56,18 @@ module Trackler
       ].reject(&:empty?).join("\n").strip
     end
 
+    def description_markdown
+      <<-MARKDOWN.chomp
+# #{name}
+
+#{blurb}
+
+#{body}
+
+#{source_markdown}
+MARKDOWN
+    end
+
     private
 
     def exercise_dir
@@ -81,6 +93,13 @@ module Trackler
       File.exist?(hints_file) ? File.read(hints_file) : ''
     end
 
+    def body
+      [
+        description,
+        hints,
+      ].reject(&:empty?).join("\n").strip
+    end
+
     # Generates the Readme.md for the implementation
     class ReadmeGenerator
       def initialize(implementation:)
@@ -89,13 +108,7 @@ module Trackler
 
       def to_s
         <<-README
-# #{implementation.name}
-
-#{implementation.blurb}
-
-#{body}
-
-#{implementation.source_markdown}
+#{implementation.description_markdown}
 
 #{incomplete_solutions_section}
 README
@@ -104,13 +117,6 @@ README
       private
 
       attr_reader :implementation
-
-      def body
-        [
-          implementation.description,
-          implementation.hints,
-        ].reject(&:empty?).join("\n").strip
-      end
 
       def incomplete_solutions_section
         <<-README
