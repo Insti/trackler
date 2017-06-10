@@ -70,7 +70,7 @@ class ImplementationTest < Minitest::Test
     specification = Trackler::Specification.new('apple', FIXTURE_PATH)
     implementation = Trackler::Implementation.new(track, specification)
 
-    refute implementation.exists?, "Not expecting apple to be implemented for track TRACK_ID"
+    refute implementation.exists?
   end
 
   def test_implementation_dup_files
