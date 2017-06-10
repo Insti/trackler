@@ -105,39 +105,6 @@ module Trackler
       assert_equal expected, implementation.files.keys
     end
 
-    def test_readme_has_empty_string_for_track_hint_when_setup_file_does_not_exist
-      track = Track.new('fake', FIXTURE_PATH)
-      specification = Specification.new('apple', FIXTURE_PATH)
-      implementation = Implementation.new(track, specification)
-
-      expected = "# Apple\n\n* apple\n* apple again\n\n## Source\n\nThe internet.\n\n## Submitting Incomplete Solutions\nIt's possible to submit an incomplete solution so you can see how others have completed the exercise.\n\n"
-      assert_equal expected, implementation.readme
-    end
-
-    def test_readme_uses_track_hint_in_precedence_of_setup
-      track = Track.new('animal', FIXTURE_PATH)
-      specification = Specification.new('dog', FIXTURE_PATH)
-      implementation = Implementation.new(track, specification)
-
-      assert_match /This is the content of the track hints file/, implementation.readme
-    end
-
-    def test_readme_uses_setup_when_track_hints_is_missing
-      track = Track.new('fruit', FIXTURE_PATH)
-      specification = Specification.new('apple', FIXTURE_PATH)
-      implementation = Implementation.new(track, specification)
-
-      assert_match %r{The SETUP.md file is deprecated, and docs/EXERCISE_README_INSERT.md should be used.}, implementation.readme
-    end
-
-    def test_readme_uses_track_hint_instead_of_setup
-      track = Track.new('jewels', FIXTURE_PATH)
-      specification = Specification.new('hello-world', FIXTURE_PATH)
-      implementation = Implementation.new(track, specification)
-
-      assert_match /This is the content of the track hints file/, implementation.readme
-    end
-
     def test_git_url
       mock_track = OpenStruct.new(repository: '[repository url]')
       mock_specification = OpenStruct.new(slug: 'slug')
