@@ -47,7 +47,7 @@ module Trackler
       assert_equal expected, implementation.files
     end
 
-    def test_language_and_implementation_specific_readme
+    def test_readme
       track = Track.new('fruit', FIXTURE_PATH)
       specification = Specification.new('banana', FIXTURE_PATH)
       implementation = Implementation.new(track, specification)
